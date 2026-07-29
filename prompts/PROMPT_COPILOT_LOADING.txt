@@ -1,0 +1,68 @@
+Crie um componente React TypeScript LoadingScreen em src/components/LoadingScreen.tsx com:
+
+REFERÊNCIAS VISUAIS:
+- Consulte o print da tela em: prints-projeto/loading-screen.png
+- Use a imagem da coruja em: src/assets/images/devlingo-loader.png (ou devlingo-char.png)
+
+ESPECIFICAÇÕES:
+
+1. TELA FULLSCREEN:
+   - Fundo roxo vibrante ocupando toda a tela (bg-purple-600, fixed inset-0, w-screen h-screen, z-50)
+   - Layout centralizado vertical e horizontalmente (flex items-center justify-center)
+   - Deve aparecer por cima de tudo (z-index alto)
+
+2. CORUJA:
+   - Importe e use a imagem: import corujaImage from '../assets/images/devlingo-loader.png'
+   - Ou use devlingo-char.png se preferir
+   - Centralizada na tela
+   - Tamanho apropriado (w-48 h-48 ou similar, ajuste conforme necessário)
+
+3. ANIMAÇÃO FLOAT:
+   - A coruja deve flutuar suavemente para cima e para baixo
+   - Animação CSS: translateY de 0px para -20px e volta
+   - Duração: 2s
+   - Timing: ease-in-out
+   - Loop: infinite
+   - Aplique a animação na imagem da coruja
+
+4. TEXTO "DEVLINGO":
+   - Texto branco (text-white)
+   - Fonte bold (font-bold)
+   - Tamanho grande (text-4xl ou text-5xl)
+   - Posicionado abaixo da coruja com espaçamento adequado (mt-8 ou similar)
+
+5. TIMER E LÓGICA:
+   - O componente deve aparecer automaticamente quando a aplicação carrega
+   - Deve ficar visível por exatamente 2 segundos
+   - Após 2 segundos, deve desaparecer suavemente (fade out)
+   - Use useState para controlar a visibilidade (isLoading)
+   - Use useEffect com setTimeout para esconder após 2 segundos
+   - Adicione transição suave ao desaparecer (transition-opacity duration-500 ou mais)
+   - ANIMAÇÃO DE ENTRADA: A coruja deve aparecer com fade in suave (opacity de 0 para 1)
+   - ANIMAÇÃO DE SAÍDA: Fade out mais suave e prolongado (duration-500 ou duration-700)
+   - As animações de entrada e saída devem ser bem suaves e elegantes
+
+6. INTEGRAÇÃO NA TELA INICIAL:
+   - O LoadingScreen deve ser integrado na rota raiz (src/routes/__root.tsx)
+   - Deve aparecer quando a aplicação inicia
+   - Após desaparecer, mostra o conteúdo normal (Outlet)
+   - Use condicional para renderizar: {isLoading && <LoadingScreen />}
+
+7. ESTILIZAÇÃO:
+   - Use Tailwind CSS para todos os estilos
+   - Mantenha o design consistente com o print de referência
+   - Garanta que a tela ocupe 100% da viewport
+   - ANIMAÇÃO DE ENTRADA: Fade in suave da coruja e texto (opacity 0 → 1, duration 500-700ms)
+   - ANIMAÇÃO DE SAÍDA: Fade out bem suave e prolongado (opacity 1 → 0, duration 500-700ms)
+   - Use transition-opacity com duration adequada para transições suaves
+   - Considere usar animate-in e animate-out do Tailwind ou animações CSS customizadas para entrada/saída mais suaves
+
+
+RESUMO:
+- Componente LoadingScreen com timer de 2 segundos
+- Aparece automaticamente ao carregar a aplicação
+- Desaparece suavemente após 2 segundos
+- Integrado na rota raiz (__root.tsx)
+- Usa a imagem real da coruja dos assets
+- Animação float na coruja
+- Design baseado no print de referência

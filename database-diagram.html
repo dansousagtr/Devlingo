@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama ERD - Database Schema</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1400px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        
+        svg {
+            width: 100%;
+            height: auto;
+        }
+        
+        .table {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+        
+        .table-header {
+            fill: #4a5568;
+        }
+        
+        .table-body {
+            fill: #ffffff;
+            stroke: #cbd5e0;
+            stroke-width: 2;
+        }
+        
+        .table-title {
+            fill: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .field-text {
+            fill: #2d3748;
+            font-size: 13px;
+        }
+        
+        .field-type {
+            fill: #718096;
+            font-size: 12px;
+            font-style: italic;
+        }
+        
+        .pk {
+            fill: #f6ad55;
+            font-weight: bold;
+        }
+        
+        .fk {
+            fill: #4299e1;
+        }
+        
+        .relationship-line {
+            stroke: #4299e1;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .relationship-label {
+            fill: #4299e1;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .cardinality {
+            fill: #2d3748;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Diagrama de Entidades e Relacionamentos</h1>
+        <p class="subtitle">Sistema de Unidades e Lições com Perfis de Usuário</p>
+        
+        <svg viewBox="0 0 1300 900" xmlns="http://www.w3.org/2000/svg">
+            <!-- Definições para setas -->
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#4299e1" />
+                </marker>
+            </defs>
+            
+            <!-- TABELA: units -->
+            <g class="table" transform="translate(50, 50)">
+                <rect class="table-header" width="300" height="40" rx="8" ry="8"/>
+                <rect class="table-body" y="40" width="300" height="180" rx="0" ry="0"/>
+                <text class="table-title" x="150" y="25" text-anchor="middle">🎯 units</text>
+                
+                <text class="field-text pk" x="15" y="70">🔑 id</text>
+                <text class="field-type" x="200" y="70">UUID (PK)</text>
+                
+                <text class="field-text" x="15" y="95">title</text>
+                <text class="field-type" x="200" y="95">TEXT</text>
+                
+                <text class="field-text" x="15" y="120">description</text>
+                <text class="field-type" x="200" y="120">TEXT</text>
+                
+                <text class="field-text" x="15" y="145">level</text>
+                <text class="field-type" x="200" y="145">TEXT</text>
+                
+                <text class="field-text" x="15" y="170">created_at</text>
+                <text class="field-type" x="200" y="170">TIMESTAMP</text>
+            </g>
+            
+            <!-- TABELA: lessons -->
+            <g class="table" transform="translate(50, 350)">
+                <rect class="table-header" width="300" height="40" rx="8" ry="8"/>
+                <rect class="table-body" y="40" width="300" height="205" rx="0" ry="0"/>
+                <text class="table-title" x="150" y="25" text-anchor="middle">📚 lessons</text>
+                
+                <text class="field-text pk" x="15" y="70">🔑 id</text>
+                <text class="field-type" x="200" y="70">UUID (PK)</text>
+                
+                <text class="field-text" x="15" y="95">title</text>
+                <text class="field-type" x="200" y="95">TEXT</text>
+                
+                <text class="field-text" x="15" y="120">description</text>
+                <text class="field-type" x="200" y="120">TEXT</text>
+                
+                <text class="field-text" x="15" y="145">xp_reward</text>
+                <text class="field-type" x="200" y="145">INTEGER</text>
+                
+                <text class="field-text fk" x="15" y="170">🔗 unit_id</text>
+                <text class="field-type" x="200" y="170">UUID (FK)</text>
+                
+                <text class="field-text" x="15" y="195">created_at</text>
+                <text class="field-type" x="200" y="195">TIMESTAMP</text>
+            </g>
+            
+            <!-- TABELA: user_profiles -->
+            <g class="table" transform="translate(550, 50)">
+                <rect class="table-header" width="300" height="40" rx="8" ry="8"/>
+                <rect class="table-body" y="40" width="300" height="205" rx="0" ry="0"/>
+                <text class="table-title" x="150" y="25" text-anchor="middle">👤 user_profiles</text>
+                
+                <text class="field-text pk" x="15" y="70">🔑 id</text>
+                <text class="field-type" x="200" y="70">UUID (PK, FK)</text>
+                
+                <text class="field-text" x="15" y="95">email</text>
+                <text class="field-type" x="200" y="95">TEXT</text>
+                
+                <text class="field-text" x="15" y="120">name</text>
+                <text class="field-type" x="200" y="120">TEXT</text>
+                
+                <text class="field-text" x="15" y="145">total_xp</text>
+                <text class="field-type" x="200" y="145">INTEGER</text>
+                
+                <text class="field-text" x="15" y="170">created_at</text>
+                <text class="field-type" x="200" y="170">TIMESTAMP</text>
+                
+                <text class="field-text" x="15" y="195">updated_at</text>
+                <text class="field-type" x="200" y="195">TIMESTAMP</text>
+            </g>
+            
+            <!-- TABELA: user_lessons -->
+            <g class="table" transform="translate(550, 400)">
+                <rect class="table-header" width="300" height="40" rx="8" ry="8"/>
+                <rect class="table-body" y="40" width="300" height="230" rx="0" ry="0"/>
+                <text class="table-title" x="150" y="25" text-anchor="middle">✅ user_lessons</text>
+                
+                <text class="field-text pk" x="15" y="70">🔑 id</text>
+                <text class="field-type" x="200" y="70">UUID (PK)</text>
+                
+                <text class="field-text fk" x="15" y="95">🔗 user_id</text>
+                <text class="field-type" x="200" y="95">UUID (FK)</text>
+                
+                <text class="field-text fk" x="15" y="120">🔗 lesson_id</text>
+                <text class="field-type" x="200" y="120">UUID (FK)</text>
+                
+                <text class="field-text" x="15" y="145">is_completed</text>
+                <text class="field-type" x="200" y="145">BOOLEAN</text>
+                
+                <text class="field-text" x="15" y="170">xp_earned</text>
+                <text class="field-type" x="200" y="170">INTEGER</text>
+                
+                <text class="field-text" x="15" y="195">completed_at</text>
+                <text class="field-type" x="200" y="195">TIMESTAMP</text>
+            </g>
+            
+            <!-- Relacionamento: units → lessons (1:N) -->
+            <path class="relationship-line" d="M 200 230 L 200 350" marker-end="url(#arrowhead)"/>
+            <text class="cardinality" x="175" y="225">1</text>
+            <text class="cardinality" x="175" y="360">N</text>
+            <text class="relationship-label" x="220" y="295">has</text>
+            
+            <!-- Relacionamento: lessons → user_lessons (1:N) -->
+            <path class="relationship-line" d="M 350 520 L 550 520" marker-end="url(#arrowhead)"/>
+            <text class="cardinality" x="360" y="515">1</text>
+            <text class="cardinality" x="530" y="515">N</text>
+            <text class="relationship-label" x="430" y="510">tracked by</text>
+            
+            <!-- Relacionamento: user_profiles → user_lessons (1:N) -->
+            <path class="relationship-line" d="M 700 255 L 700 400" marker-end="url(#arrowhead)"/>
+            <text class="cardinality" x="675" y="250">1</text>
+            <text class="cardinality" x="675" y="410">N</text>
+            <text class="relationship-label" x="720" y="330">completes</text>
+            
+            <!-- Legenda -->
+            <g transform="translate(950, 50)">
+                <rect width="300" height="180" rx="8" fill="#f7fafc" stroke="#cbd5e0" stroke-width="2"/>
+                <text x="150" y="30" text-anchor="middle" class="field-text" font-weight="bold" font-size="16">📖 Legenda</text>
+                
+                <text class="field-text pk" x="20" y="60">🔑 PK</text>
+                <text class="field-text" x="80" y="60">= Primary Key</text>
+                
+                <text class="field-text fk" x="20" y="85">🔗 FK</text>
+                <text class="field-text" x="80" y="85">= Foreign Key</text>
+                
+                <line x1="20" y1="105" x2="70" y2="105" class="relationship-line" marker-end="url(#arrowhead)"/>
+                <text class="field-text" x="80" y="110">= Relacionamento</text>
+                
+                <text class="cardinality" x="20" y="135">1:N</text>
+                <text class="field-text" x="80" y="135">= Um para Muitos</text>
+                
+                <text class="field-text" x="20" y="160" font-size="11" fill="#718096">
+                    * Constraint UNIQUE em
+                </text>
+                <text class="field-text" x="20" y="175" font-size="11" fill="#718096">
+                    user_lessons(user_id, lesson_id)
+                </text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
