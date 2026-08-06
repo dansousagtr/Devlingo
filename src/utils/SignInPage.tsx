@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -12,11 +12,15 @@ function ButtonSpinner() {
 }
 
 export function SignInPage() {
-
-
-  const { signIn } = useAuth();
+  const { isAuthenticated, loading, signIn } = useAuth();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate({ to: '/', replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   // useEffect(() => {
   //   if (!loading && isAuthenticated) {
@@ -38,19 +42,19 @@ export function SignInPage() {
   });
 
   const onSubmit = async (values: SignInFormValues) => {
-    const result = await signIn(values.email, values.password);
-
-    if (result.success) {
-      navigate({ to: '/', replace: true });
-    } else {
-      setErrorMessage(result.errorMessage || 'Erro ao fazer login');
-    }
+    setErrorMessage(null);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log('Sign in payload:', values);
-    } finally {
-      // no-op to keep form enabled after submission
+      const result = await signIn(values.email, values.password);
+
+      if (result.success) {
+        navigate({ to: '/', replace: true });
+      } else {
+        setErrorMessage(result.errorMessage || 'Erro ao fazer login');
+      }
+    } catch (err) {
+      console.error('Erro inesperado no formulário de login:', err);
+      setErrorMessage('Erro inesperado ao fazer login. Tente novamente.');
     }
   };
 

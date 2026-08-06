@@ -1,19 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { X, Heart, Check, XCircle } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { Question } from '../types'
+import owl from '../assets/images/devlingo-char.png'
 
 interface LessonScreenProps {
     lessonId?: string | number
+    lessonTitle?: string
+    lessonXp?: number
+    unitId?: string | number
     questions: Question[]
     onClose?: () => void
+    onComplete?: (lessonTitle: string, unitId: string | number) => void
 }
 
 type FeedbackState = null | 'correct' | 'wrong'
 
 export const LessonScreen: React.FC<LessonScreenProps> = ({
+    lessonId,
+    lessonTitle,
+    lessonXp,
+    unitId,
     questions,
     onClose,
+    onComplete,
 }) => {
     const navigate = useNavigate()
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -22,6 +32,7 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({
     const [lives, setLives] = useState(3)
     const [correctAnswers, setCorrectAnswers] = useState(0)
     const [isComplete, setIsComplete] = useState(false)
+    const completionReportedRef = useRef(false)
 
     const currentQuestion = questions[currentQuestionIndex]
     const progress = questions.length > 0
@@ -82,7 +93,24 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({
         setLives(3)
         setCorrectAnswers(0)
         setIsComplete(false)
+        completionReportedRef.current = false
     }
+
+    useEffect(() => {
+        if (!isComplete || !lessonId || !unitId || completionReportedRef.current) {
+            return
+        }
+
+        const totalQuestions = questions.length
+        const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0
+
+        if (score >= 70) {
+            completionReportedRef.current = true
+            if (lessonTitle && unitId) {
+                onComplete?.(lessonTitle, unitId)
+            }
+        }
+    }, [correctAnswers, isComplete, lessonId, lessonTitle, onComplete, questions.length, unitId])
 
     const getOptionStyle = (index: number) => {
         if (feedback === null) {
@@ -123,62 +151,115 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({
     // Tela de conclusão
     if (isComplete) {
         const totalQuestions = questions.length
-        const score = Math.round((correctAnswers / totalQuestions) * 100)
+        const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0
         const passed = score >= 70
-        const lostLives = 3 - lives
+        const wrongAnswers = totalQuestions - correctAnswers
+        const precision = score
+        const xpEarned = lessonXp ?? 0
+
+        if (passed) {
+            return (
+                <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+                    <div className="w-full max-w-xl rounded-[40px] bg-white shadow-[0_35px_80px_rgba(15,23,42,0.08)] border border-slate-200 overflow-hidden">
+                        <div className="bg-white px-10 pt-12 pb-8 text-center">
+                            <div className="mx-auto mb-8 flex h-36 w-36 items-center justify-center rounded-full bg-purple-100 shadow-inner">
+                                <img src={owl} alt="Coruja Devlingo" className="h-24 w-24 object-contain" />
+                            </div>
+                            <h1 className="text-4xl font-extrabold text-slate-900">Lição concluída!</h1>
+                            <p className="mt-3 text-base text-slate-500">Parabéns, você finalizou a lição com sucesso.</p>
+                        </div>
+
+                        <div className="bg-slate-50 px-8 pb-10">
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="rounded-3xl bg-amber-50 border border-amber-200 p-6 text-left shadow-sm">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">Total de XP</p>
+                                    <div className="mt-5 flex items-center gap-3">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-amber-100 text-amber-700 text-xl">💎</div>
+                                        <p className="text-3xl font-extrabold text-amber-800">{xpEarned}</p>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-3xl bg-emerald-50 border border-emerald-200 p-6 text-left shadow-sm">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Boa</p>
+                                    <div className="mt-5 flex items-center gap-3">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700 text-xl">🎯</div>
+                                        <p className="text-3xl font-extrabold text-emerald-800">{precision}%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleClose}
+                                className="mt-10 w-full rounded-3xl bg-emerald-600 px-8 py-4 text-base font-bold text-white transition hover:bg-emerald-700"
+                            >
+                                Continuar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
 
         return (
-            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
-                <div className="max-w-md w-full text-center space-y-8">
-                    {/* Ícone de resultado */}
-                    <div className={`mx-auto w-24 h-24 rounded-full flex items-center justify-center ${passed ? 'bg-green-100' : 'bg-red-100'}`}>
-                        {passed ? (
-                            <Check size={48} className="text-green-500" />
-                        ) : (
-                            <XCircle size={48} className="text-red-500" />
-                        )}
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+                <div className="w-full max-w-2xl rounded-[40px] bg-white shadow-[0_35px_80px_rgba(15,23,42,0.08)] border border-slate-200 overflow-hidden">
+                    <div className="bg-white px-8 pt-12 pb-10 text-center">
+                        <div className="mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-purple-100 shadow-inner">
+                            <img src={owl} alt="Coruja Devlingo" className="h-20 w-20 object-contain" />
+                        </div>
+
+                        <h1 className="text-3xl font-bold text-slate-900">Você quase conseguiu!</h1>
+                        <p className="mt-3 text-base text-slate-500">Continue praticando para melhorar.</p>
                     </div>
 
-                    {/* Título */}
-                    <h2 className="text-3xl font-bold text-gray-800">
-                        {passed ? 'Parabéns! 🎉' : 'Tente Novamente! 💪'}
-                    </h2>
-                    <p className="text-gray-600 text-lg">
-                        {passed
-                            ? 'Você completou a lição com sucesso!'
-                            : 'Você precisa de 70% para passar nesta lição.'}
-                    </p>
+                    <div className="border-t border-slate-200 bg-slate-50 px-8 py-8">
+                        <div className="grid gap-4">
+                            <div className="rounded-[24px] bg-white p-5 shadow-sm border border-slate-200 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                                        <Check size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-700">Respostas corretas</p>
+                                    </div>
+                                </div>
+                                <p className="text-xl font-bold text-slate-900">{correctAnswers}</p>
+                            </div>
 
-                    {/* Estatísticas */}
-                    <div className="grid grid-cols-3 gap-4 py-6">
-                        <div className="bg-gray-50 rounded-xl p-4">
-                            <p className="text-2xl font-bold text-gray-800">{correctAnswers}/{totalQuestions}</p>
-                            <p className="text-sm text-gray-500">Acertos</p>
-                        </div>
-                        <div className="bg-gray-50 rounded-xl p-4">
-                            <p className={`text-2xl font-bold ${passed ? 'text-green-500' : 'text-red-500'}`}>{score}%</p>
-                            <p className="text-sm text-gray-500">Pontuação</p>
-                        </div>
-                        <div className="bg-gray-50 rounded-xl p-4">
-                            <p className="text-2xl font-bold text-rose-500">{lostLives}</p>
-                            <p className="text-sm text-gray-500">Vidas perdidas</p>
-                        </div>
-                    </div>
+                            <div className="rounded-[24px] bg-white p-5 shadow-sm border border-slate-200 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
+                                        <X size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-700">Respostas incorretas</p>
+                                    </div>
+                                </div>
+                                <p className="text-xl font-bold text-slate-900">{wrongAnswers}</p>
+                            </div>
 
-                    {/* Botões */}
-                    <div className="flex gap-4 justify-center">
-                        <button
-                            onClick={handleClose}
-                            className="bg-gray-200 text-gray-700 font-bold uppercase px-6 py-3 rounded-xl hover:bg-gray-300 transition-colors"
-                        >
-                            Sair
-                        </button>
-                        <button
-                            onClick={handleRestart}
-                            className="bg-violet-600 text-white font-bold uppercase px-6 py-3 rounded-xl hover:bg-violet-700 transition-colors"
-                        >
-                            Tentar Novamente
-                        </button>
+                            <div className="rounded-[24px] bg-white p-5 shadow-sm border border-slate-200">
+                                <div className="flex items-center justify-between text-sm text-slate-600">
+                                    <span>Precisão</span>
+                                    <span className="font-semibold text-slate-900">{precision}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
+                            <button
+                                onClick={handleClose}
+                                className="w-full sm:w-auto rounded-3xl border border-slate-300 bg-white px-6 py-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                            >
+                                Voltar
+                            </button>
+                            <button
+                                onClick={handleRestart}
+                                className="w-full sm:w-auto rounded-3xl bg-emerald-600 px-6 py-4 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                            >
+                                Tentar novamente
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

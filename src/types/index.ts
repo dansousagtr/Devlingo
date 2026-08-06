@@ -3,6 +3,7 @@ export interface User {
   email?: string;
   name?: string;
   avatar_url?: string;
+  total_xp?: number;
 }
 
 export interface Lesson {
@@ -11,6 +12,7 @@ export interface Lesson {
   description: string;
   xp: number;
   completed: boolean;
+  questions?: Question[];
 }
 
 export interface Unit {

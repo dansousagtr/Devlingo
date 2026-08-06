@@ -1,24 +1,41 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useAuth } from "./auth/authContexts";
 import loaderImage from "../assets/images/devlingo-loader.png";
 
 export default function LoadingScreen() {
   const [isVisible, setIsVisible] = useState(true);
   const [isFading, setIsFading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { loading: authLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
+    let fadeTimer: number | undefined;
     const visibleTimer = window.setTimeout(() => {
       setIsFading(true);
-      const fadeTimer = window.setTimeout(() => {
+      fadeTimer = window.setTimeout(() => {
         setIsVisible(false);
-        navigate({ to: '/signin' });
+
+        if (!authLoading) {
+          if (!isAuthenticated && !['/signin', '/signup'].includes(location.pathname)) {
+            navigate({ to: '/signin', replace: true });
+          }
+
+          if (isAuthenticated && location.pathname === '/signin') {
+            navigate({ to: '/', replace: true });
+          }
+        }
       }, 700);
-      return () => window.clearTimeout(fadeTimer);
     }, 2000);
 
-    return () => window.clearTimeout(visibleTimer);
-  }, [navigate]);
+    return () => {
+      window.clearTimeout(visibleTimer);
+      if (fadeTimer !== undefined) {
+        window.clearTimeout(fadeTimer);
+      }
+    };
+  }, [navigate, authLoading, isAuthenticated, location.pathname]);
 
   if (!isVisible) {
     return null;

@@ -21,9 +21,13 @@ export const LessonsModal: React.FC<LessonsModalProps> = ({
 
     if (!isOpen) return null
 
-    const handleLessonClick = (lesson: any) => {
+    const handleLessonClick = (lesson: Lesson) => {
         onLessonClick?.(lesson, unit.id)
-        navigate({ to: `/lessons/${lesson.id}` })
+        navigate({
+            to: '/lessons/$lessonId',
+            params: { lessonId: String(lesson.id) },
+            search: { unitId: String(unit.id) },
+        })
     }
 
     return (
