@@ -18,8 +18,9 @@ npm i
 
 ## 🏃 Executando o Projeto
 
+```https://devlingo-pi.vercel.app/signin```
+
 ```bash
-devlingo-pi.vercel.app
 npm run dev
 ```
 
