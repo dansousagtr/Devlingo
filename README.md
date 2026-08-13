@@ -9,6 +9,12 @@ Template limpo e moderno para iniciar projetos React com TypeScript, Tailwind CS
 - **Tailwind CSS** para estilização
 - **Supabase** para backend (cliente configurado)
 - **TanStack Router** para roteamento
+- 
+## Acesse o Projeto
+
+``` site
+https://devlingo-pi.vercel.app/signin
+```
 
 ## 📦 Instalação
 
@@ -17,14 +23,6 @@ npm i
 ```
 
 ## 🏃 Executando o Projeto
-
-## Acesse o Projeto
-
-
-``` site
-https://devlingo-pi.vercel.app/signin
-```
-
 ```bash
 npm run dev
 ```
